@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verb Irregulars 🇬🇧</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0f172a;--card:#1e293b;--card2:#273449;--accent:#f59e0b;--green:#10b981;--red:#ef4444;--text:#f1f5f9;--muted:#94a3b8;--radius:20px;}
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px 16px 60px;}
+  h1{font-family:'Fredoka One',cursive;font-size:2rem;color:var(--accent);text-align:center;margin-bottom:4px;}
+  .sub{color:var(--muted);font-size:.85rem;margin-bottom:20px;text-align:center;}
+
+  .tabs{display:flex;gap:6px;background:var(--card);padding:6px;border-radius:50px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;}
+  .tab{padding:8px 18px;border-radius:50px;border:none;background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s;}
+  .tab.on{background:var(--accent);color:#0f172a;}
+
+  .dir-row{display:flex;gap:10px;margin-bottom:20px;}
+  .dir-btn{padding:6px 16px;border-radius:50px;border:2px solid var(--muted);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;transition:.2s;}
+  .dir-btn.on{border-color:var(--green);color:var(--green);background:rgba(16,185,129,.1);}
+
+  .prog-wrap{width:100%;max-width:480px;height:8px;background:var(--card2);border-radius:99px;margin-bottom:8px;overflow:hidden;}
+  .prog-fill{height:100%;background:linear-gradient(90deg,var(--green),var(--accent));border-radius:99px;transition:width .4s;}
+  .prog-lbl{font-size:.78rem;color:var(--muted);margin-bottom:16px;text-align:center;}
+
+  .score-row{display:flex;gap:16px;margin-bottom:20px;}
+  .score-box{display:flex;flex-direction:column;align-items:center;background:var(--card);border-radius:14px;padding:10px 22px;}
+  .snum{font-family:'Fredoka One',cursive;font-size:1.6rem;}
+  .snum.g{color:var(--green);}.snum.r{color:var(--red);}
+  .slbl{font-size:.72rem;color:var(--muted);}
+  .screen{width:100%;max-width:480px;}
+
+  /* FLASHCARD */
+  .cwrap{perspective:1000px;width:100%;height:220px;margin-bottom:20px;cursor:pointer;}
+  .cinner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,0,.2,1);}
+  .cinner.flip{transform:rotateY(180deg);}
+  .cface{position:absolute;inset:0;backface-visibility:hidden;border-radius:var(--radius);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:24px;}
+  .cfront{background:linear-gradient(135deg,#1e3a5f,#1e293b);border:2px solid rgba(245,158,11,.3);}
+  .cback{background:linear-gradient(135deg,#064e3b,#1e293b);border:2px solid rgba(16,185,129,.3);transform:rotateY(180deg);}
+  .clang{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--muted);}
+  .cword{font-family:'Fredoka One',cursive;font-size:2.4rem;text-align:center;line-height:1.1;}
+  .chint{font-size:.78rem;color:var(--muted);text-align:center;}
+  .spk{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:var(--accent);border-radius:50px;padding:4px 14px;font-size:.8rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
+  .tap-hint{text-align:center;font-size:.75rem;color:var(--muted);margin-bottom:16px;}
+  .fc-nav{display:flex;gap:12px;justify-content:center;}
+  .btn{padding:12px 24px;border-radius:50px;border:none;font-family:'Nunito',sans-serif;font-weight:800;font-size:.95rem;cursor:pointer;transition:.2s;}
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.1);}
+  .bp{background:var(--card2);color:var(--muted);}
+  .bs{background:var(--card2);color:var(--text);}
+  .bn{background:var(--accent);color:#0f172a;}
+
+  /* QUIZ */
+  .qcard{background:linear-gradient(135deg,#1e3a5f,#1e293b);border:2px solid rgba(245,158,11,.3);border-radius:var(--radius);padding:28px 20px;text-align:center;margin-bottom:18px;}
+  .qtag{font-size:.7rem;text-transform:uppercase;letter-spacing:2px;color:var(--accent);margin-bottom:8px;}
+  .qword{font-family:'Fredoka One',cursive;font-size:2.4rem;margin-bottom:8px;line-height:1.1;}
+  .qspk{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.4);color:var(--accent);border-radius:50px;padding:4px 14px;font-size:.8rem;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;}
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;}
+  .opt{padding:14px 10px;border-radius:14px;border:2px solid var(--card2);background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;transition:.2s;text-align:center;line-height:1.2;}
+  .opt:hover:not(:disabled){border-color:var(--accent);background:rgba(245,158,11,.1);}
+  .opt.ok{border-color:var(--green)!important;background:rgba(16,185,129,.2)!important;color:var(--green)!important;}
+  .opt.ko{border-color:var(--red)!important;background:rgba(239,68,68,.15)!important;color:var(--red)!important;}
+  .opt:disabled{cursor:default;}
+  .winput{width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--card2);background:var(--card);color:var(--text);font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:700;outline:none;transition:border .2s;margin-bottom:10px;}
+  .winput:focus{border-color:var(--accent);}
+  .wbtn{width:100%;padding:13px;border-radius:50px;border:none;background:var(--accent);color:#0f172a;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;}
+  .fb{text-align:center;font-size:1rem;font-weight:800;min-height:26px;margin-bottom:14px;}
+  .fb.ok{color:var(--green);}.fb.ko{color:var(--red);}
+  .nqbtn{width:100%;padding:14px;border-radius:50px;border:none;background:var(--accent);color:#0f172a;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;}
+
+  /* RESULTS */
+  .results{background:var(--card);border-radius:var(--radius);padding:32px 24px;text-align:center;width:100%;max-width:480px;}
+  .remo{font-size:3.5rem;margin-bottom:12px;}
+  .rtit{font-family:'Fredoka One',cursive;font-size:1.8rem;color:var(--accent);margin-bottom:8px;}
+  .rtxt{color:var(--muted);margin-bottom:20px;font-size:.95rem;}
+  .rscr{font-family:'Fredoka One',cursive;font-size:3.5rem;color:var(--green);margin-bottom:16px;}
+  .rbtn{padding:12px 28px;border-radius:50px;border:none;background:var(--accent);color:#0f172a;font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;margin:4px;}
+  .rbtn2{padding:12px 28px;border-radius:50px;border:2px solid var(--muted);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;margin:4px;}
+
+  /* STATS */
+  .stats-wrap{width:100%;max-width:480px;}
+  .stats-header{font-family:'Fredoka One',cursive;font-size:1.4rem;color:var(--accent);margin-bottom:16px;text-align:center;}
+  .stats-filter{display:flex;gap:8px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+  .sf-btn{padding:6px 14px;border-radius:50px;border:2px solid var(--card2);background:transparent;color:var(--muted);font-family:'Nunito',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;}
+  .sf-btn.on{border-color:var(--accent);color:var(--accent);}
+  .stat-row{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:14px;padding:10px 14px;margin-bottom:8px;}
+  .stat-verb{font-family:'Fredoka One',cursive;font-size:1rem;flex:1;min-width:0;}
+  .stat-cat{font-size:.75rem;color:var(--muted);flex:1;min-width:0;}
+  .stat-bar-wrap{width:70px;height:8px;background:var(--card2);border-radius:99px;overflow:hidden;flex-shrink:0;}
+  .stat-bar{height:100%;border-radius:99px;}
+  .stat-pct{font-size:.8rem;font-weight:800;width:36px;text-align:right;flex-shrink:0;}
+  .stat-attempts{font-size:.72rem;color:var(--muted);width:40px;text-align:right;flex-shrink:0;}
+  .no-stats{text-align:center;color:var(--muted);padding:40px 0;font-size:.9rem;}
+  .stats-back{width:100%;padding:13px;border-radius:50px;border:none;background:var(--card2);color:var(--text);font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;cursor:pointer;margin-top:16px;}
+
+  /* EXPERT MODE TOGGLE */
+  .expert-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;justify-content:center;}
+  .expert-lbl{font-size:.82rem;color:var(--muted);font-weight:700;}
+  .toggle-wrap{position:relative;width:44px;height:24px;cursor:pointer;}
+  .toggle-wrap input{opacity:0;width:0;height:0;position:absolute;}
+  .toggle-slider{position:absolute;inset:0;background:var(--card2);border-radius:99px;transition:.3s;}
+  .toggle-slider:before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;}
+  .toggle-wrap input:checked + .toggle-slider{background:var(--accent);}
+  .toggle-wrap input:checked + .toggle-slider:before{transform:translateX(20px);}
+
+  /* BEST STREAK BADGE */
+  .best-streak{display:flex;align-items:center;gap:6px;background:var(--card);border-radius:50px;
+    padding:5px 14px;font-size:.8rem;font-weight:800;color:var(--accent);margin-bottom:14px;border:1px solid rgba(245,158,11,.3);}
+
+  /* PRIZES WALL */
+  .prizes-wall{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0 6px;}
+  .prize-badge{font-size:1.8rem;filter:grayscale(1) opacity(.3);transition:.3s;}
+  .prize-badge.earned{filter:none;animation:sdpop .4s ease;}
+
+  /* PRIZE OVERLAY bg glow */
+  .prize-glow{position:absolute;inset:0;border-radius:var(--radius);opacity:.15;pointer-events:none;}
+  .streak-bar{display:flex;gap:5px;justify-content:center;margin-bottom:14px;min-height:24px;}
+  .streak-dot{width:20px;height:20px;border-radius:50%;background:var(--card2);transition:all .3s;font-size:12px;display:flex;align-items:center;justify-content:center;}
+  .streak-dot.lit{background:var(--accent);box-shadow:0 0 8px var(--accent);animation:sdpop .3s ease;}
+  @keyframes sdpop{0%{transform:scale(1)}50%{transform:scale(1.6)}100%{transform:scale(1)}}
+
+  /* PRIZE OVERLAY */
+  #prize-overlay{position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;background:rgba(15,23,42,.93);
+    opacity:0;pointer-events:none;transition:opacity .4s;}
+  #prize-overlay.show{opacity:1;pointer-events:all;}
+  .prize-box{text-align:center;animation:bounceIn .6s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes bounceIn{0%{transform:scale(0) rotate(-10deg)}100%{transform:scale(1) rotate(0)}}
+  .prize-emoji{font-size:7rem;display:block;margin-bottom:8px;animation:wiggle 1.2s ease infinite;}
+  @keyframes wiggle{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}}
+  .prize-title{font-family:'Fredoka One',cursive;font-size:2.6rem;color:var(--accent);margin-bottom:6px;}
+  .prize-sub{color:var(--text);font-size:1rem;margin-bottom:28px;line-height:1.4;}
+  .prize-btn{padding:14px 44px;border-radius:50px;border:none;background:var(--accent);
+    color:#0f172a;font-family:'Nunito',sans-serif;font-weight:800;font-size:1.1rem;cursor:pointer;}
+  #confetti-canvas{position:fixed;inset:0;pointer-events:none;z-index:998;}
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+
+<!-- PRIZE OVERLAY -->
+<div id="prize-overlay">
+  <div class="prize-box">
+    <span class="prize-emoji" id="prize-emoji">🏆</span>
+    <div class="prize-title" id="prize-title">¡10 seguides!</div>
+    <div class="prize-sub" id="prize-sub">Ets increïble! 🔥<br>10 respostes correctes sense cap error!</div>
+    <button class="prize-btn" onclick="closePrize()">💪 Seguim!</button>
+  </div>
+</div>
+
+<h1>🇬🇧 Verb Irregulars</h1>
+<p class="sub">Anglès ↔ Català · Practica amb els 100 verbs</p>
+
+<div class="tabs">
+  <button class="tab on" id="t-flash" onclick="goFlash()">🃏 Flashcards</button>
+  <button class="tab"    id="t-quiz"  onclick="goQuiz()">🧠 Quiz</button>
+  <button class="tab"    id="t-stats" onclick="goStats()">📊 Estadístiques</button>
+</div>
+
+<div class="dir-row" id="dir-row">
+  <button class="dir-btn on" id="d-en" onclick="setDir('en-ca')">🇬🇧 → 🏴 Cat</button>
+  <button class="dir-btn"    id="d-ca" onclick="setDir('ca-en')">🏴 Cat → 🇬🇧</button>
+</div>
+
+<div class="prog-wrap" id="prog-wrap"><div class="prog-fill" id="prog" style="width:1%"></div></div>
+<p class="prog-lbl" id="plbl">1 / 120</p>
+
+<div class="score-row" id="score-row">
+  <div class="score-box"><span class="snum g" id="sok">0</span><span class="slbl">✔ Correctes</span></div>
+  <div class="score-box"><span class="snum r" id="sko">0</span><span class="slbl">✖ Fallades</span></div>
+</div>
+<div class="streak-bar" id="streak-bar"></div>
+
+<!-- FLASHCARD -->
+<div class="screen" id="S-flash">
+  <div class="cwrap" onclick="flipCard()">
+    <div class="cinner" id="cinner">
+      <div class="cface cfront">
+        <span class="clang" id="fl-lang">Anglès</span>
+        <span class="cword" id="fl-word">—</span>
+        <button class="spk" id="fl-spk" onclick="event.stopPropagation();speak()">🔊 Sentir</button>
+      </div>
+      <div class="cface cback">
+        <span class="clang" id="bl-lang">Català</span>
+        <span class="cword" id="bl-word">—</span>
+        <span class="chint" id="bl-hint"></span>
+      </div>
+    </div>
+  </div>
+  <p class="tap-hint">👆 Toca la carta per girar-la</p>
+  <div class="fc-nav">
+    <button class="btn bp" onclick="prevCard()">← Anterior</button>
+    <button class="btn bs" onclick="shuffleCards()">🔀</button>
+    <button class="btn bn" onclick="nextCard()">Següent →</button>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="screen" id="S-quiz" style="display:none">
+
+  <!-- Expert mode + best streak row -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+    <div class="expert-row" style="margin:0">
+      <span class="expert-lbl">Mode Expert 🧗</span>
+      <label class="toggle-wrap">
+        <input type="checkbox" id="expert-toggle" onchange="toggleExpert()">
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="best-streak" id="best-streak-badge">🏅 Rècord: <span id="best-streak-num">0</span></div>
+  </div>
+
+  <!-- Prizes wall -->
+  <div class="prizes-wall" id="prizes-wall"></div>
+
+  <div class="qcard">
+    <div class="qtag"  id="q-tag">Anglès → Català</div>
+    <div class="qword" id="q-word">—</div>
+    <button class="qspk" id="q-spk" onclick="speak()">🔊 Sentir</button>
+  </div>
+  <div class="opts" id="q-opts"></div>
+  <div id="q-write" style="display:none">
+    <input class="winput" id="q-inp" type="text" placeholder="Escriu el verb en anglès..."
+      autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+      onkeydown="if(event.key==='Enter')checkWrite()">
+    <div id="q-inp2-wrap" style="display:none;margin-top:8px;">
+      <input class="winput" id="q-inp2" type="text" placeholder="I l'altre verb en anglès..."
+        autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+        onkeydown="if(event.key==='Enter')checkWrite()" style="border-color:rgba(245,158,11,.4);">
+    </div>
+    <button class="wbtn" onclick="checkWrite()">✔ Comprovar</button>
+  </div>
+  <div class="fb" id="q-fb"></div>
+  <button class="nqbtn" id="nqbtn" style="display:none" onclick="nextQ()">Següent pregunta →</button>
+</div>
+
+<!-- RESULTS -->
+<div class="results" id="S-res" style="display:none">
+  <div class="remo" id="r-emo">🎉</div>
+  <div class="rtit">Resultat final</div>
+  <div class="rtxt" id="r-txt"></div>
+  <div class="rscr" id="r-scr"></div>
+  <div>
+    <button class="rbtn"  onclick="goQuiz()">🔄 Repetir quiz</button>
+    <button class="rbtn2" onclick="goStats()">📊 Veure estadístiques</button>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-wrap" id="S-stats" style="display:none">
+  <div class="stats-header">📊 Estadístiques per verb</div>
+  <div class="stats-filter">
+    <button class="sf-btn on" onclick="filterStats('all',this)">Tots</button>
+    <button class="sf-btn"    onclick="filterStats('weak',this)">💪 Per millorar</button>
+    <button class="sf-btn"    onclick="filterStats('good',this)">⭐ Dominats</button>
+    <button class="sf-btn"    onclick="filterStats('unseen',this)">🆕 Sense practicar</button>
+  </div>
+  <div id="stats-list"></div>
+  <button class="stats-back" onclick="goFlash()">← Tornar</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA — col[0]=infinitiu, col[1]=past, col[2]=pp, col[3]=català
+// col[4] (opcional) = array de respostes anglès addicionals vàlides per si el català és ambigu
+// ═══════════════════════════════════════
+const V=[
+  ["BE (am, is, are)","WAS / WERE","BEEN","Ser / Estar"],
+  ["BEAT","BEAT","BEATEN","Batre"],
+  ["BECOME","BECAME","BECOME","Convertir-se"],
+  ["BEGIN","BEGAN","BEGUN","Començar"],
+  ["BEND","BENT","BENT","Doblegar"],
+  ["BITE","BIT","BITTEN","Mossegar"],
+  ["BLOW","BLEW","BLOWN","Bufar"],
+  ["BREAK","BROKE","BROKEN","Trencar"],
+  ["BRING","BROUGHT","BROUGHT","Portar"],
+  ["BROADCAST","BROADCAST","BROADCAST","Emetre / Televisar"],
+  ["BUILD","BUILT","BUILT","Construir"],
+  ["BURN","BURNT or BURNED","BURNT or BURNED","Cremar"],
+  ["BURST","BURST","BURST","Rebentar (-se)"],
+  ["BUY","BOUGHT","BOUGHT","Comprar"],
+  ["CAN","COULD","BEEN ABLE TO","Poder"],
+  // CATCH i TAKE comparteixen "Agafar"
+  ["CATCH","CAUGHT","CAUGHT","Agafar",["TAKE","CATCH"]],
+  ["CHOOSE","CHOSE","CHOSEN","Escollir"],
+  ["COME","CAME","COME","Venir"],
+  ["COST","COST","COST","Costar"],
+  ["CREEP","CREPT","CREPT","Arrossegar-se"],
+  ["CUT","CUT","CUT","Tallar (-se)"],
+  ["DIG","DUG","DUG","Cavar"],
+  // DO i MAKE comparteixen significats però els deixem separats
+  ["DO","DID","DONE","Fer"],
+  ["DRAW","DREW","DRAWN","Dibuixar"],
+  ["DREAM","DREAMT / DREAMED","DREAMT / DREAMED","Somiar"],
+  ["DRINK","DRANK","DRUNK","Beure"],
+  ["DRIVE","DROVE","DRIVEN","Conduir"],
+  ["DRY","DRIED","DRIED","Assecar"],
+  ["EAT","ATE","EATEN","Menjar"],
+  ["FALL","FELL","FALLEN","Caure"],
+  ["FEED","FED","FED","Alimentar"],
+  ["FEEL","FELT","FELT","Sentir (-se)"],
+  ["FIGHT","FOUGHT","FOUGHT","Lluitar"],
+  ["FIND","FOUND","FOUND","Trobar"],
+  ["FLY","FLEW","FLOWN","Volar"],
+  ["FORBID","FORBAD / FORBADE","FORBIDDEN","Prohibir"],
+  ["FORGET","FORGOT","FORGOTTEN","Oblidar (-se)"],
+  ["FREEZE","FROZE","FROZEN","Congelar (-se)"],
+  ["GET","GOT","GOT or GOTTEN","Aconseguir"],
+  ["GIVE","GAVE","GIVEN","Donar"],
+  ["GO","WENT","GONE","Anar (-se'n)"],
+  ["GROW","GREW","GROWN","Créixer"],
+  ["HANG","HUNG or HANGED","HUNG or HANGED","Penjar"],
+  ["HAVE","HAD","HAD","Tenir"],
+  // HEAR i FEEL comparteixen "Sentir"
+  ["HEAR","HEARD","HEARD","Sentir (escoltar)",["HEAR","FEEL"]],
+  ["HIDE","HID","HIDDEN","Amagar (-se)"],
+  // HIT i STRIKE comparteixen "Copejar"
+  ["HIT","HIT","HIT","Copejar",["HIT","STRIKE"]],
+  ["HOLD","HELD","HELD","Aguantar"],
+  ["HURT","HURT","HURT","Fer (-se) mal"],
+  ["KEEP","KEPT","KEPT","Guardar"],
+  ["KNOW","KNEW","KNOWN","Saber"],
+  // LAY i PUT i SET comparteixen "Posar"
+  ["LAY","LAID","LAID","Posar",["LAY","PUT","SET"]],
+  ["LEAD","LED","LED","Guiar"],
+  ["LEAN","LEANT or LEANED","LEANT or LEANED","Inclinar (-se)"],
+  ["LEARN","LEARNT or LEARNED","LEARNT or LEARNED","Aprendre"],
+  ["LEAVE","LEFT","LEFT","Anar-se'n"],
+  ["LEND","LENT","LENT","Deixar (diners)"],
+  ["LET","LET","LET","Deixar",["LET","LEND"]],
+  ["LIE","LAY","LAIN","Ajeure's"],
+  ["LIGHT","LIT","LIT","Il·luminar"],
+  ["LOSE","LOST","LOST","Perdre"],
+  ["MAKE","MADE","MADE","Fabricar"],
+  ["MEAN","MEANT","MEANT","Significar"],
+  ["MEET","MET","MET","Reunir-se"],
+  ["MOW","MOWED","MOWN or MOWED","Segar"],
+  ["OVERTAKE","OVERTOOK","OVERTAKEN","Passar"],
+  ["PAY","PAID","PAID","Pagar"],
+  ["PUT","PUT","PUT","Posar",["LAY","PUT","SET"]],
+  ["READ","READ","READ","Llegir"],
+  ["RIDE","RODE","RIDDEN","Muntar (bicicleta)"],
+  ["RING","RANG","RUNG","Sonar (timbre)"],
+  ["RISE","ROSE","RISEN","Aixecar-se"],
+  ["RUN","RAN","RUN","Córrer"],
+  // SAY i TELL comparteixen "Dir"
+  ["SAY","SAID","SAID","Dir",["SAY","TELL"]],
+  ["SEE","SAW","SEEN","Veure"],
+  ["SEEK","SOUGHT","SOUGHT","Buscar"],
+  ["SELL","SOLD","SOLD","Vendre"],
+  ["SEND","SENT","SENT","Enviar"],
+  ["SET","SET","SET","Situar"],
+  ["SEW","SEWED","SEWN","Cosir"],
+  ["SHAKE","SHOOK","SHAKEN","Sacsejar"],
+  ["SHAVE","SHAVED","SHAVEN","Afaitar (se)"],
+  ["SHINE","SHONE","SHONE","Brillar"],
+  ["SHOOT","SHOT","SHOT","Disparar"],
+  ["SHOW","SHOWED","SHOWN","Mostrar"],
+  ["SHRINK","SHRANK","SHRUNK","Encongir (-se)"],
+  ["SHUT","SHUT","SHUT","Tancar (-se)"],
+  ["SING","SANG","SUNG","Cantar"],
+  ["SINK","SANK","SUNK","Enfonsar"],
+  ["SIT","SAT","SAT","Seure"],
+  ["SLEEP","SLEPT","SLEPT","Dormir"],
+  ["SMELL","SMELT or SMELLED","SMELT or SMELLED","Olorar"],
+  ["SOW","SOWED","SOWN","Sembrar"],
+  ["SPEAK","SPOKE","SPOKEN","Parlar"],
+  ["SPELL","SPELT / SPELLED","SPELT / SPELLED","Lletrejar"],
+  ["SPEND","SPENT","SPENT","Gastar (diners)"],
+  ["SPILL","SPILT","SPILT","Vessar (-se)"],
+  ["SPIN","SPUN or SPAN","SPUN","Girar, donar voltes"],
+  ["SPLIT","SPLIT","SPLIT","Separar (-se)"],
+  ["SPOIL","SPOILT or SPOILED","SPOILT or SPOILED","Espatlllar"],
+  ["SPREAD","SPREAD","SPREAD","Estendre ('s)"],
+  ["STAND","STOOD","STOOD","Estar dret"],
+  ["STEAL","STOLE","STOLEN","Robar"],
+  ["STICK","STUCK","STUCK","Enganxar (-se)"],
+  // STRIKE i HIT comparteixen "Copejar"
+  ["STRIKE","STRUCK","STRUCK","Copejar",["HIT","STRIKE"]],
+  ["SWEAR","SWORE","SWORN","Jurar"],
+  ["SWEEP","SWEPT","SWEPT","Escombrar"],
+  ["SWIM","SWAM","SWUM","Nedar"],
+  ["SWING","SWUNG","SWUNG","Gronxar-se"],
+  // TAKE i CATCH comparteixen "Agafar"
+  ["TAKE","TOOK","TAKEN","Agafar",["TAKE","CATCH"]],
+  ["TEACH","TAUGHT","TAUGHT","Ensenyar"],
+  ["TEAR","TORE","TORN","Estripar (-se)"],
+  // TELL i SAY comparteixen "Dir"
+  ["TELL","TOLD","TOLD","Dir",["SAY","TELL"]],
+  ["THINK","THOUGHT","THOUGHT","Pensar"],
+  ["THROW","THREW","THROWN","Llençar"],
+  ["UNDERSTAND","UNDERSTOOD","UNDERSTOOD","Entendre"],
+  ["WAKE UP","WOKE UP","WOKEN UP","Despertar (-se)"],
+  ["WEAR","WORE","WORN","Portar posat de roba"],
+  ["WEEP","WEPT","WEPT","Plorar"],
+  ["WIN","WON","WON","Guanyar"],
+  ["WRITE","WROTE","WRITTEN","Escriure"],
+];
+
+// ═══════════════════════════════════════
+// STATS: per cada verb guardem {ok, ko, lastResult}
+// ═══════════════════════════════════════
+const stats = {}; // clau: infinitiu (V[i][0])
+V.forEach(v => { stats[v[0]] = {ok:0, ko:0}; });
+
+// Pes per al quiz adaptatiu: més fallades = més probabilitat de sortir
+function getWeight(v) {
+  const s = stats[v[0]];
+  const total = s.ok + s.ko;
+  if (total === 0) return 3;          // mai vist → prioritat mitjana
+  const errRate = s.ko / total;
+  if (errRate > 0.6) return 8;        // molt dolent
+  if (errRate > 0.3) return 5;        // regular
+  if (errRate === 0) return 1;        // perfecte → menys sovint
+  return 3;
+}
+
+function weightedShuffle(arr) {
+  const weighted = [];
+  arr.forEach(v => {
+    const w = getWeight(v);
+    for (let i = 0; i < w; i++) weighted.push(v);
+  });
+  // Shuffle i eliminar duplicats mantenint ordre
+  shuf(weighted);
+  const seen = new Set();
+  return weighted.filter(v => {
+    if (seen.has(v[0])) return false;
+    seen.add(v[0]); return true;
+  });
+}
+
+// ═══════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════
+function shuf(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+let curEn='';
+function speak(){
+  if(!curEn)return;
+  const w=curEn.replace(/\(.*?\)/g,'').trim().toLowerCase();
+  new Audio('https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(w)+'&tl=en&client=tw-ob').play().catch(()=>{});
+}
+function setProg(c,t){document.getElementById('prog').style.width=(c/t*100)+'%';document.getElementById('plbl').textContent=c+' / '+t;}
+function setScore(ok,ko){document.getElementById('sok').textContent=ok;document.getElementById('sko').textContent=ko;}
+
+function hideAll(){
+  ['S-flash','S-quiz','S-res','S-stats'].forEach(id=>document.getElementById(id).style.display='none');
+}
+function setTab(id){
+  ['t-flash','t-quiz','t-stats'].forEach(t=>document.getElementById(t).classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+}
+
+// ═══════════════════════════════════════
+// ANSWER VALIDATION — admet múltiples respostes vàlides
+// ═══════════════════════════════════════
+
+// Donada la pregunta (català o anglès) i el verb en joc, retorna TOTES les respostes angleses vàlides
+function validEnAnswers(verb) {
+  // Si el verb té col[4], retorna aquella llista; sinó, només el propi infinitiu
+  return verb[4] ? verb[4] : [verb[0]];
+}
+
+// Donada la pregunta en anglès, quines traduccions catalanes valen?
+// (cas simple: sempre la del propi verb)
+function validCatAnswers(verb) {
+  return [verb[3]];
+}
+
+// Comprova si una resposta escrita és vàlida
+function isValidAnswer(typed, validList) {
+  const t = typed.trim().toUpperCase();
+  return validList.some(v => {
+    // Accepta qualsevol variant separada per "or", "/", "|"
+    const variants = v.toUpperCase().split(/\s+OR\s+|\/|\|/).map(s=>s.replace(/\(.*?\)/g,'').trim());
+    return variants.some(vv => t === vv || t === vv.replace(/\s+/g,' ').trim());
+  });
+}
+
+// Per les opcions de múltiple opció: marca com a correcte qualsevol opció que sigui resposta vàlida
+function isValidOptAnswer(optText, validList) {
+  return validList.some(v => optText.toUpperCase() === v.toUpperCase() ||
+    optText.toUpperCase().replace(/\(.*?\)/g,'').trim() === v.toUpperCase().replace(/\(.*?\)/g,'').trim()
+  );
+}
+
+// ═══════════════════════════════════════
+// FLASHCARD
+// ═══════════════════════════════════════
+let fDir='en-ca', deck=[], ci=0, flipped=false;
+
+function goFlash(){
+  hideAll();
+  setTab('t-flash');
+  document.getElementById('dir-row').style.display='flex';
+  document.getElementById('prog-wrap').style.display='block';
+  document.getElementById('plbl').style.display='block';
+  document.getElementById('score-row').style.display='flex';
+  document.getElementById('S-flash').style.display='block';
+  deck=shuf([...V]); ci=0; flipped=false; setScore(0,0);
+  renderCard();
+}
+
+function setDir(d){
+  fDir=d;
+  document.getElementById('d-en').classList.toggle('on',d==='en-ca');
+  document.getElementById('d-ca').classList.toggle('on',d==='ca-en');
+  deck=shuf([...V]); ci=0; renderCard();
+}
+
+function renderCard(){
+  const v=deck[ci]; flipped=false;
+  document.getElementById('cinner').classList.remove('flip');
+  setProg(ci+1,deck.length);
+  curEn=v[0];
+  if(fDir==='en-ca'){
+    document.getElementById('fl-lang').textContent='🇬🇧 Anglès';
+    document.getElementById('fl-word').textContent=v[0];
+    document.getElementById('bl-lang').textContent='🏴 Català';
+    document.getElementById('bl-word').textContent=v[3];
+    document.getElementById('bl-hint').textContent='Past: '+v[1];
+    document.getElementById('fl-spk').style.display='';
+  } else {
+    document.getElementById('fl-lang').textContent='🏴 Català';
+    document.getElementById('fl-word').textContent=v[3];
+    document.getElementById('bl-lang').textContent='🇬🇧 Anglès';
+    document.getElementById('bl-word').textContent=v[0];
+    document.getElementById('bl-hint').textContent='Past: '+v[1];
+    document.getElementById('fl-spk').style.display='none';
+  }
+}
+function flipCard(){flipped=!flipped;document.getElementById('cinner').classList.toggle('flip',flipped);if(flipped&&fDir==='ca-en')speak();}
+function nextCard(){if(ci<deck.length-1){ci++;renderCard();}}
+function prevCard(){if(ci>0){ci--;renderCard();}}
+function shuffleCards(){shuf(deck);ci=0;renderCard();}
+
+// ═══════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════
+let qList=[], qi=0, qOk=0, qKo=0, qDone=false;
+let qCurrentVerb=null, qCurrentDir='', qValidAnswers=[];
+
+function goQuiz(){
+  hideAll();
+  setTab('t-quiz');
+  document.getElementById('dir-row').style.display='none';
+  document.getElementById('prog-wrap').style.display='block';
+  document.getElementById('plbl').style.display='block';
+  document.getElementById('score-row').style.display='flex';
+  document.getElementById('S-quiz').style.display='block';
+  qList=weightedShuffle(V); qi=0; qOk=0; qKo=0; streak=0;
+  setScore(0,0);
+  renderPrizesWall();
+  updateStreakBar();
+  renderQ();
+}
+
+function renderQ(){
+  if(qi>=qList.length){showRes();return;}
+  qDone=false;
+  document.getElementById('q-fb').textContent='';
+  document.getElementById('q-fb').className='fb';
+  document.getElementById('nqbtn').style.display='none';
+
+  const v=qList[qi];
+  qCurrentVerb=v;
+  setProg(qi+1,qList.length);
+  curEn=v[0];
+
+  const dir=Math.random()<0.5?'en-ca':'ca-en';
+  qCurrentDir=dir;
+
+  let qTxt;
+  if(dir==='en-ca'){
+    qTxt=v[0];
+    qValidAnswers=validCatAnswers(v); // espera resposta en català
+    document.getElementById('q-tag').textContent='🇬🇧 Anglès → 🏴 Català';
+    document.getElementById('q-spk').style.display='';
+  } else {
+    qTxt=v[3];
+    qValidAnswers=validEnAnswers(v); // espera resposta en anglès
+    document.getElementById('q-tag').textContent='🏴 Català → 🇬🇧 Anglès';
+    document.getElementById('q-spk').style.display='none';
+  }
+  document.getElementById('q-word').textContent=qTxt;
+
+  const opts=document.getElementById('q-opts');
+  const writ=document.getElementById('q-write');
+  const inp=document.getElementById('q-inp');
+
+  if(dir==='en-ca'){
+    // 8 opcions múltiple
+    writ.style.display='none';
+    opts.style.display='grid';
+    opts.innerHTML='';
+    // Resposta correcta + 7 distractors (exclou verbs amb mateixa traducció)
+    const correct=v[3];
+    const wrong=shuf(V.filter(x=>x[0]!==v[0] && x[3]!==correct)).slice(0,7).map(x=>x[3]);
+    shuf([correct,...wrong]).forEach(o=>{
+      const b=document.createElement('button');
+      b.className='opt'; b.textContent=o;
+      b.onclick=()=>pickOpt(b,o);
+      opts.appendChild(b);
+    });
+  } else {
+    // Escriure
+    opts.style.display='none'; opts.innerHTML='';
+    writ.style.display='block';
+    inp.value=''; inp.style.borderColor='var(--card2)';
+    // Segon camp si mode expert + verb ambigu
+    const inp2wrap = document.getElementById('q-inp2-wrap');
+    const inp2 = document.getElementById('q-inp2');
+    if(expertMode && qValidAnswers.length > 1) {
+      inp2wrap.style.display='block';
+      inp2.value=''; inp2.style.borderColor='var(--card2)';
+      inp.placeholder = 'Escriu el primer verb en anglès...';
+    } else {
+      inp2wrap.style.display='none';
+      inp.placeholder = 'Escriu el verb en anglès...';
+    }
+    setTimeout(()=>inp.focus(),80);
+  }
+}
+
+function resolveQuestion(isOk){
+  const v=qCurrentVerb;
+  if(isOk){
+    stats[v[0]].ok++;
+    qOk++;
+    streak++;
+    if (streak > bestStreak) bestStreak = streak;
+    if (streak > 0 && streak % STREAK_TARGET === 0) {
+      setTimeout(triggerPrize, 400);
+    }
+  } else {
+    stats[v[0]].ko++;
+    qKo++;
+    streak = 0;
+  }
+  setScore(qOk,qKo);
+  updateStreakBar();
+  document.getElementById('nqbtn').style.display='block';
+  qi++;
+}
+
+function pickOpt(btn, chosen){
+  if(qDone)return; qDone=true;
+  const isOk = isValidOptAnswer(chosen, qValidAnswers);
+
+  // Marca verd TOTES les opcions vàlides
+  document.querySelectorAll('.opt').forEach(b=>{
+    b.disabled=true;
+    if(isValidOptAnswer(b.textContent, qValidAnswers)) b.classList.add('ok');
+  });
+  if(!isOk) btn.classList.add('ko');
+
+  const fb=document.getElementById('q-fb');
+  if(isOk){
+    fb.textContent='✔ Molt bé! 🎉'; fb.className='fb ok';
+  } else {
+    const hint = qValidAnswers.join(' / ');
+    fb.textContent='✖ Era: "'+hint+'"'; fb.className='fb ko';
+  }
+  resolveQuestion(isOk);
+}
+
+function checkWrite(){
+  if(qDone)return; qDone=true;
+  const inp  = document.getElementById('q-inp');
+  const inp2 = document.getElementById('q-inp2');
+  const typed1 = inp.value.trim();
+
+  const isMulti = qValidAnswers.length > 1;
+  const fb = document.getElementById('q-fb');
+
+  if(expertMode && isMulti) {
+    // Mode expert: cal escriure els DOS verbs
+    const typed2 = inp2 ? inp2.value.trim() : '';
+    const both = [typed1, typed2];
+    // Comprovem que cada resposta vàlida tingui una coincidència en el que ha escrit
+    const allCovered = qValidAnswers.every(valid =>
+      both.some(t => isValidAnswer(t, [valid]))
+    );
+    if(allCovered) {
+      inp.style.borderColor='var(--green)';
+      if(inp2) inp2.style.borderColor='var(--green)';
+      fb.innerHTML='✔ Excel·lent! Els dos verbs! 🏆<br><small style="font-weight:400">'+qValidAnswers.join(' i ')+'</small>';
+      fb.className='fb ok';
+      // Diu en veu alta el que ha escrit l'usuari (el primer que hagi posat)
+      speakWord(typed1.toUpperCase());
+      setTimeout(()=>speakWord(typed2.toUpperCase()), 800);
+      resolveQuestion(true);
+    } else {
+      inp.style.borderColor='var(--red)';
+      if(inp2) inp2.style.borderColor='var(--red)';
+      fb.innerHTML='✖ Calen els dos: <b>'+qValidAnswers.join('</b> i <b>')+'</b>';
+      fb.className='fb ko';
+      // Diu en veu alta els correctes
+      speakWord(qValidAnswers[0]);
+      setTimeout(()=>speakWord(qValidAnswers[1]), 800);
+      resolveQuestion(false);
+    }
+  } else {
+    // Mode normal
+    const isOk = isValidAnswer(typed1, qValidAnswers);
+    if(isOk) {
+      inp.style.borderColor='var(--green)';
+      if(isMulti) {
+        const otherVerbs = qValidAnswers.filter(v => !isValidAnswer(typed1,[v]));
+        fb.innerHTML='✔ Correcte! 🎉' +
+          (otherVerbs.length ? '<br><small style="color:var(--muted);font-weight:400">⚠️ També val: <b style="color:var(--accent)">'+otherVerbs.join(' / ')+'</b></small>' : '');
+      } else {
+        fb.textContent='✔ Correcte! 🎉';
+      }
+      fb.className='fb ok';
+      // Diu en veu alta el que ha escrit l'usuari, no el que tenia pensat el programa
+      speakWord(typed1.toUpperCase());
+    } else {
+      inp.style.borderColor='var(--red)';
+      const hint = qValidAnswers.join(' / ');
+      if(isMulti) {
+        fb.innerHTML='✖ Era: <b>'+qValidAnswers.join('</b> o <b>')+'</b>';
+      } else {
+        fb.textContent='✖ Era: "'+hint+'"';
+      }
+      fb.className='fb ko';
+      // Diu en veu alta la resposta correcta
+      speakWord(qValidAnswers[0]);
+      if(qValidAnswers[1]) setTimeout(()=>speakWord(qValidAnswers[1]), 800);
+    }
+    resolveQuestion(isOk);
+  }
+}
+
+function speakWord(word) {
+  if(!word) return;
+  const w = word.replace(/\(.*?\)/g,'').trim().toLowerCase();
+  new Audio('https://translate.google.com/translate_tts?ie=UTF-8&q='+encodeURIComponent(w)+'&tl=en&client=tw-ob').play().catch(()=>{});
+}
+
+function nextQ(){renderQ();}
+
+function showRes(){
+  hideAll();
+  document.getElementById('S-res').style.display='block';
+  const tot=qList.length, pct=Math.round(qOk/tot*100);
+  document.getElementById('r-scr').textContent=qOk+' / '+tot;
+  let e='😅',t='Continua practicant!';
+  if(pct>=90){e='🏆';t='Excel·lent! Ets un crack!';}
+  else if(pct>=70){e='🎉';t='Molt bé! Quasi perfecte!';}
+  else if(pct>=50){e='👍';t='Bé! Continua endavant!';}
+  document.getElementById('r-emo').textContent=e;
+  document.getElementById('r-txt').textContent=t+' ('+pct+'% correctes)';
+  setProg(tot,tot);
+}
+
+// ═══════════════════════════════════════
+// STATS SCREEN
+// ═══════════════════════════════════════
+let currentFilter='all';
+
+function goStats(){
+  hideAll();
+  setTab('t-stats');
+  document.getElementById('dir-row').style.display='none';
+  document.getElementById('prog-wrap').style.display='none';
+  document.getElementById('plbl').style.display='none';
+  document.getElementById('score-row').style.display='none';
+  document.getElementById('S-stats').style.display='block';
+  renderStats(currentFilter);
+}
+
+function filterStats(f, btn){
+  currentFilter=f;
+  document.querySelectorAll('.sf-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  renderStats(f);
+}
+
+function renderStats(filter){
+  const list=document.getElementById('stats-list');
+  list.innerHTML='';
+
+  let rows=V.map(v=>{
+    const s=stats[v[0]];
+    const total=s.ok+s.ko;
+    const pct=total===0?null:Math.round(s.ok/total*100);
+    return {v,s,total,pct};
+  });
+
+  if(filter==='weak')   rows=rows.filter(r=>r.total>0 && r.pct<70).sort((a,b)=>a.pct-b.pct);
+  if(filter==='good')   rows=rows.filter(r=>r.total>0 && r.pct>=70).sort((a,b)=>b.pct-a.pct);
+  if(filter==='unseen') rows=rows.filter(r=>r.total===0);
+
+  if(rows.length===0){
+    list.innerHTML='<div class="no-stats">'+
+      (filter==='unseen'?'🎉 Has practicat tots els verbs!':
+       filter==='weak'?'💪 No tens verbs per millorar encara!':
+       filter==='good'?'Encerta alguns per veure\'ls aquí!':
+       'No hi ha dades encara. Fes un quiz!')+
+    '</div>';
+    return;
+  }
+
+  rows.forEach(({v,s,total,pct})=>{
+    const row=document.createElement('div');
+    row.className='stat-row';
+
+    let barColor='var(--muted)', barW=0, pctTxt='—';
+    if(pct!==null){
+      barW=pct;
+      barColor=pct>=70?'var(--green)':pct>=40?'var(--accent)':'var(--red)';
+      pctTxt=pct+'%';
+    }
+
+    row.innerHTML=`
+      <div class="stat-verb">${v[0]}</div>
+      <div class="stat-cat">${v[3]}</div>
+      <div class="stat-bar-wrap"><div class="stat-bar" style="width:${barW}%;background:${barColor}"></div></div>
+      <div class="stat-pct" style="color:${barColor}">${pctTxt}</div>
+      <div class="stat-attempts">${total>0?total+'×':'—'}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+// INIT
+goFlash();
+
+// ═══════════════════════════════════════
+// EXPERT MODE
+// ═══════════════════════════════════════
+let expertMode = false;
+function toggleExpert() {
+  expertMode = document.getElementById('expert-toggle').checked;
+}
+
+// ═══════════════════════════════════════
+// STREAK, BEST STREAK & PRIZES
+// ═══════════════════════════════════════
+let streak = 0;
+let bestStreak = 0;
+let totalPrizesEarned = 0;
+const STREAK_TARGET = 10;
+
+// Premis progressius — cada 10 és un nou nivell, cada cop més epic
+const prizes = [
+  // Nivell 1 — 10 seguides (1r premi)
+  {emoji:'🏅', title:'10 seguides!',      sub:'Primer premi aconseguit!\n10 respostes sense cap error! 🔥',       color:'#cd7f32'},
+  // Nivell 2 — 20 seguides
+  {emoji:'🥈', title:'20 seguides!',      sub:'Plata! Ets molt bo/a! 🥈\n20 respostes perfectes seguides!',        color:'#c0c0c0'},
+  // Nivell 3 — 30 seguides
+  {emoji:'🥇', title:'30 seguides!',      sub:'Or! Increïble! 🥇\n30 de 30 sense fallar!',                         color:'#ffd700'},
+  // Nivell 4 — 40 seguides
+  {emoji:'💎', title:'Diamant!',          sub:'Mode Diamant activat! 💎\n40 respostes perfectes! Ets únic/a!',      color:'#a8d8ea'},
+  // Nivell 5 — 50 seguides
+  {emoji:'🚀', title:'Al·lucinant!',      sub:'50 seguides! Vas com un coet! 🚀\nAixò és LLEGENDARI!',              color:'#f59e0b'},
+  // Nivell 6 — 60 seguides
+  {emoji:'🧙', title:'Mag dels Verbs!',   sub:'60 seguides! Ets un autèntic mag! 🧙\nNingú t\'atura!',              color:'#a855f7'},
+  // Nivell 7 — 70 seguides
+  {emoji:'🐉', title:'Drac Llegendari!',  sub:'70 seguides! Drac Mestre despertat! 🐉\nEts imparable!',             color:'#10b981'},
+  // Nivell 8 — 80 seguides
+  {emoji:'⭐', title:'Estrella!',          sub:'80 seguides! Ets una estrella! ⭐\nImpossible per a tu!',            color:'#fbbf24'},
+  // Nivell 9 — 90 seguides
+  {emoji:'🌌', title:'Galàctic!',         sub:'90 seguides! Fora del planeta! 🌌\nAlien de les gramàtiques!',       color:'#6366f1'},
+  // Nivell 10 — 100 seguides
+  {emoji:'👑', title:'REI/REINA!',        sub:'100 SEGUIDES! 👑\nEts el/la MILLOR. Punt.',                          color:'#f59e0b'},
+  // Per si arriba més lluny, es repeteix el crown amb comptador
+];
+
+function getPrize(totalEarned) {
+  return prizes[Math.min(totalEarned, prizes.length - 1)];
+}
+
+function updateStreakBar() {
+  const bar = document.getElementById('streak-bar');
+  if (!bar) return;
+  if (document.getElementById('S-quiz').style.display === 'none') { bar.innerHTML=''; return; }
+  bar.innerHTML = '';
+  for (let i = 0; i < STREAK_TARGET; i++) {
+    const d = document.createElement('div');
+    d.className = 'streak-dot' + (i < (streak % STREAK_TARGET === 0 && streak > 0 ? STREAK_TARGET : streak % STREAK_TARGET) ? ' lit' : '');
+    d.textContent = i < (streak % STREAK_TARGET === 0 && streak > 0 ? STREAK_TARGET : streak % STREAK_TARGET) ? '⭐' : '';
+    bar.appendChild(d);
+  }
+  // Best streak
+  document.getElementById('best-streak-num').textContent = bestStreak;
+}
+
+function renderPrizesWall() {
+  const wall = document.getElementById('prizes-wall');
+  if (!wall) return;
+  wall.innerHTML = '';
+  prizes.forEach((p, i) => {
+    const span = document.createElement('span');
+    span.className = 'prize-badge' + (i < totalPrizesEarned ? ' earned' : '');
+    span.textContent = p.emoji;
+    span.title = i < totalPrizesEarned ? p.title : '???';
+    wall.appendChild(span);
+  });
+}
+
+function triggerPrize() {
+  const p = getPrize(totalPrizesEarned);
+  totalPrizesEarned++;
+  renderPrizesWall();
+  document.getElementById('prize-emoji').textContent = p.emoji;
+  document.getElementById('prize-title').textContent = p.title;
+  document.getElementById('prize-sub').innerHTML = p.sub.replace('\n','<br>');
+  // Color del overlay segons nivell
+  document.getElementById('prize-overlay').style.background = `rgba(15,23,42,.93)`;
+  document.getElementById('prize-overlay').classList.add('show');
+  startConfetti(p.color);
+}
+
+function closePrize() {
+  document.getElementById('prize-overlay').classList.remove('show');
+  stopConfetti();
+}
+
+// ── CONFETTI ──
+let confettiAnim = null;
+
+function startConfetti(accentColor) {
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const base = ['#f59e0b','#10b981','#3b82f6','#ec4899','#a855f7','#ef4444','#fff'];
+  const colors = accentColor ? [accentColor, accentColor, ...base] : base;
+
+  const particles = Array.from({length: 150}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height - canvas.height,
+    r: Math.random() * 8 + 4,
+    color: colors[Math.floor(Math.random()*colors.length)],
+    tiltAngle: 0,
+    tiltSpeed: Math.random() * 0.12 + 0.04,
+    speed: Math.random() * 3.5 + 1.5,
+    shape: Math.random() > 0.5 ? 'rect' : 'circle',
+  }));
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p => {
+      p.tiltAngle += p.tiltSpeed;
+      p.y += p.speed;
+      const tilt = Math.sin(p.tiltAngle) * 14;
+      if (p.y > canvas.height + 10) { p.y = -10; p.x = Math.random()*canvas.width; }
+      ctx.fillStyle = p.color;
+      ctx.beginPath();
+      if (p.shape === 'circle') {
+        ctx.arc(p.x + tilt, p.y, p.r/2, 0, Math.PI*2);
+      } else {
+        ctx.rect(p.x + tilt - p.r/2, p.y - p.r/2, p.r, p.r * 0.6);
+      }
+      ctx.fill();
+    });
+    frame++;
+    if (frame < 400) confettiAnim = requestAnimationFrame(draw);
+    else { ctx.clearRect(0,0,canvas.width,canvas.height); confettiAnim=null; }
+  }
+  if (confettiAnim) cancelAnimationFrame(confettiAnim);
+  draw();
+}
+
+function stopConfetti() {
+  if (confettiAnim) { cancelAnimationFrame(confettiAnim); confettiAnim=null; }
+  const canvas = document.getElementById('confetti-canvas');
+  if (canvas) canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+}
+</script>
+</body>
+</html>
