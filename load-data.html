@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Carrega inicial Firebase - Verbs League</title>
+<style>
+  body{font-family:monospace;background:#0f172a;color:#f1f5f9;padding:20px;}
+  button{padding:12px 24px;background:#f59e0b;color:#0f172a;border:none;border-radius:8px;font-weight:800;font-size:1rem;cursor:pointer;margin:8px 0;}
+  pre{background:#1e293b;padding:16px;border-radius:8px;font-size:.8rem;max-height:400px;overflow:auto;}
+  .ok{color:#10b981;}.err{color:#ef4444;}.info{color:#94a3b8;}
+</style>
+</head>
+<body>
+<h2>🔧 Carrega inicial Firebase — Verbs League</h2>
+<p class="info">Executa aquest fitxer UNA sola vegada per poblar la base de dades.</p>
+<button onclick="loadAll()">🚀 Carregar tots els dades</button>
+<button onclick="loadCole36056()">🏫 Carregar cole 36056</button>
+<button onclick="loadCole25587()">🏫 Carregar cole 25587</button>
+<pre id="log">Esperant...</pre>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, collection, addDoc, writeBatch }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD6TGwnkWkVHvwK29iyB1sBaJAzU5YFlW8",
+  authDomain: "irregularverbsmulticenter.firebaseapp.com",
+  projectId: "irregularverbsmulticenter",
+  storageBucket: "irregularverbsmulticenter.firebasestorage.app",
+  messagingSenderId: "326680899997",
+  appId: "1:326680899997:web:1c1d63c3d58bb4ec0c3f74",
+  measurementId: "G-S80DC1ZEQS"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const log = (msg, cls='') => {
+  const el = document.getElementById('log');
+  el.innerHTML += `<span class="${cls}">${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+};
+
+// ══════════════════════════════════════
+// COLE 36056 — Cole de l'Hugo (120 verbs)
+// ══════════════════════════════════════
+const VERBS_36056 = [
+  {infinitivo:"BE (am, is, are)",pasado:"WAS / WERE",participio:"BEEN",traduccion_ca:"Ser / Estar",activo:true},
+  {infinitivo:"BEAT",pasado:"BEAT",participio:"BEATEN",traduccion_ca:"Batre",activo:true},
+  {infinitivo:"BECOME",pasado:"BECAME",participio:"BECOME",traduccion_ca:"Convertir-se",activo:true},
+  {infinitivo:"BEGIN",pasado:"BEGAN",participio:"BEGUN",traduccion_ca:"Començar",activo:true},
+  {infinitivo:"BEND",pasado:"BENT",participio:"BENT",traduccion_ca:"Doblegar",activo:true},
+  {infinitivo:"BITE",pasado:"BIT",participio:"BITTEN",traduccion_ca:"Mossegar",activo:true},
+  {infinitivo:"BLOW",pasado:"BLEW",participio:"BLOWN",traduccion_ca:"Bufar",activo:true},
+  {infinitivo:"BREAK",pasado:"BROKE",participio:"BROKEN",traduccion_ca:"Trencar",activo:true},
+  {infinitivo:"BRING",pasado:"BROUGHT",participio:"BROUGHT",traduccion_ca:"Portar",activo:true},
+  {infinitivo:"BROADCAST",pasado:"BROADCAST",participio:"BROADCAST",traduccion_ca:"Emetre / Televisar",activo:true},
+  {infinitivo:"BUILD",pasado:"BUILT",participio:"BUILT",traduccion_ca:"Construir",activo:true},
+  {infinitivo:"BURN",pasado:"BURNT or BURNED",participio:"BURNT or BURNED",traduccion_ca:"Cremar",activo:true},
+  {infinitivo:"BURST",pasado:"BURST",participio:"BURST",traduccion_ca:"Rebentar (-se)",activo:true},
+  {infinitivo:"BUY",pasado:"BOUGHT",participio:"BOUGHT",traduccion_ca:"Comprar",activo:true},
+  {infinitivo:"CAN",pasado:"COULD",participio:"BEEN ABLE TO",traduccion_ca:"Poder",activo:true},
+  {infinitivo:"CATCH",pasado:"CAUGHT",participio:"CAUGHT",traduccion_ca:"Agafar",ambiguos:["CATCH","TAKE"],activo:true},
+  {infinitivo:"CHOOSE",pasado:"CHOSE",participio:"CHOSEN",traduccion_ca:"Escollir",activo:true},
+  {infinitivo:"COME",pasado:"CAME",participio:"COME",traduccion_ca:"Venir",activo:true},
+  {infinitivo:"COST",pasado:"COST",participio:"COST",traduccion_ca:"Costar",activo:true},
+  {infinitivo:"CREEP",pasado:"CREPT",participio:"CREPT",traduccion_ca:"Arrossegar-se",activo:true},
+  {infinitivo:"CUT",pasado:"CUT",participio:"CUT",traduccion_ca:"Tallar (-se)",activo:true},
+  {infinitivo:"DIG",pasado:"DUG",participio:"DUG",traduccion_ca:"Cavar",activo:true},
+  {infinitivo:"DO",pasado:"DID",participio:"DONE",traduccion_ca:"Fer",activo:true},
+  {infinitivo:"DRAW",pasado:"DREW",participio:"DRAWN",traduccion_ca:"Dibuixar",activo:true},
+  {infinitivo:"DREAM",pasado:"DREAMT / DREAMED",participio:"DREAMT / DREAMED",traduccion_ca:"Somiar",activo:true},
+  {infinitivo:"DRINK",pasado:"DRANK",participio:"DRUNK",traduccion_ca:"Beure",activo:true},
+  {infinitivo:"DRIVE",pasado:"DROVE",participio:"DRIVEN",traduccion_ca:"Conduir",activo:true},
+  {infinitivo:"DRY",pasado:"DRIED",participio:"DRIED",traduccion_ca:"Assecar",activo:true},
+  {infinitivo:"EAT",pasado:"ATE",participio:"EATEN",traduccion_ca:"Menjar",activo:true},
+  {infinitivo:"FALL",pasado:"FELL",participio:"FALLEN",traduccion_ca:"Caure",activo:true},
+  {infinitivo:"FEED",pasado:"FED",participio:"FED",traduccion_ca:"Alimentar",activo:true},
+  {infinitivo:"FEEL",pasado:"FELT",participio:"FELT",traduccion_ca:"Sentir (-se)",ambiguos:["FEEL","HEAR"],activo:true},
+  {infinitivo:"FIGHT",pasado:"FOUGHT",participio:"FOUGHT",traduccion_ca:"Lluitar",activo:true},
+  {infinitivo:"FIND",pasado:"FOUND",participio:"FOUND",traduccion_ca:"Trobar",activo:true},
+  {infinitivo:"FLY",pasado:"FLEW",participio:"FLOWN",traduccion_ca:"Volar",activo:true},
+  {infinitivo:"FORBID",pasado:"FORBAD / FORBADE",participio:"FORBIDDEN",traduccion_ca:"Prohibir",activo:true},
+  {infinitivo:"FORGET",pasado:"FORGOT",participio:"FORGOTTEN",traduccion_ca:"Oblidar (-se)",activo:true},
+  {infinitivo:"FREEZE",pasado:"FROZE",participio:"FROZEN",traduccion_ca:"Congelar (-se)",activo:true},
+  {infinitivo:"GET",pasado:"GOT",participio:"GOT or GOTTEN",traduccion_ca:"Aconseguir",activo:true},
+  {infinitivo:"GIVE",pasado:"GAVE",participio:"GIVEN",traduccion_ca:"Donar",activo:true},
+  {infinitivo:"GO",pasado:"WENT",participio:"GONE",traduccion_ca:"Anar-se'n",ambiguos:["GO","LEAVE"],activo:true},
+  {infinitivo:"GROW",pasado:"GREW",participio:"GROWN",traduccion_ca:"Créixer",activo:true},
+  {infinitivo:"HANG",pasado:"HUNG or HANGED",participio:"HUNG or HANGED",traduccion_ca:"Penjar",activo:true},
+  {infinitivo:"HAVE",pasado:"HAD",participio:"HAD",traduccion_ca:"Tenir",activo:true},
+  {infinitivo:"HEAR",pasado:"HEARD",participio:"HEARD",traduccion_ca:"Sentir (escoltar)",ambiguos:["FEEL","HEAR"],activo:true},
+  {infinitivo:"HIDE",pasado:"HID",participio:"HIDDEN",traduccion_ca:"Amagar (-se)",activo:true},
+  {infinitivo:"HIT",pasado:"HIT",participio:"HIT",traduccion_ca:"Copejar",ambiguos:["HIT","STRIKE"],activo:true},
+  {infinitivo:"HOLD",pasado:"HELD",participio:"HELD",traduccion_ca:"Aguantar",activo:true},
+  {infinitivo:"HURT",pasado:"HURT",participio:"HURT",traduccion_ca:"Fer (-se) mal",activo:true},
+  {infinitivo:"KEEP",pasado:"KEPT",participio:"KEPT",traduccion_ca:"Guardar",activo:true},
+  {infinitivo:"KNOW",pasado:"KNEW",participio:"KNOWN",traduccion_ca:"Saber",activo:true},
+  {infinitivo:"LAY",pasado:"LAID",participio:"LAID",traduccion_ca:"Posar",ambiguos:["LAY","PUT","SET"],activo:true},
+  {infinitivo:"LEAD",pasado:"LED",participio:"LED",traduccion_ca:"Guiar",activo:true},
+  {infinitivo:"LEAN",pasado:"LEANT or LEANED",participio:"LEANT or LEANED",traduccion_ca:"Inclinar (-se)",activo:true},
+  {infinitivo:"LEARN",pasado:"LEARNT or LEARNED",participio:"LEARNT or LEARNED",traduccion_ca:"Aprendre",activo:true},
+  {infinitivo:"LEAVE",pasado:"LEFT",participio:"LEFT",traduccion_ca:"Anar-se'n",ambiguos:["GO","LEAVE"],activo:true},
+  {infinitivo:"LEND",pasado:"LENT",participio:"LENT",traduccion_ca:"Deixar (diners)",activo:true},
+  {infinitivo:"LET",pasado:"LET",participio:"LET",traduccion_ca:"Deixar",ambiguos:["LET","LEND"],activo:true},
+  {infinitivo:"LIE",pasado:"LAY",participio:"LAIN",traduccion_ca:"Ajeure's",activo:true},
+  {infinitivo:"LIGHT",pasado:"LIT",participio:"LIT",traduccion_ca:"Il·luminar",activo:true},
+  {infinitivo:"LOSE",pasado:"LOST",participio:"LOST",traduccion_ca:"Perdre",activo:true},
+  {infinitivo:"MAKE",pasado:"MADE",participio:"MADE",traduccion_ca:"Fabricar",activo:true},
+  {infinitivo:"MEAN",pasado:"MEANT",participio:"MEANT",traduccion_ca:"Significar",activo:true},
+  {infinitivo:"MEET",pasado:"MET",participio:"MET",traduccion_ca:"Reunir-se",activo:true},
+  {infinitivo:"MOW",pasado:"MOWED",participio:"MOWN or MOWED",traduccion_ca:"Segar",activo:true},
+  {infinitivo:"OVERTAKE",pasado:"OVERTOOK",participio:"OVERTAKEN",traduccion_ca:"Passar",activo:true},
+  {infinitivo:"PAY",pasado:"PAID",participio:"PAID",traduccion_ca:"Pagar",activo:true},
+  {infinitivo:"PUT",pasado:"PUT",participio:"PUT",traduccion_ca:"Posar",ambiguos:["LAY","PUT","SET"],activo:true},
+  {infinitivo:"READ",pasado:"READ",participio:"READ",traduccion_ca:"Llegir",activo:true},
+  {infinitivo:"RIDE",pasado:"RODE",participio:"RIDDEN",traduccion_ca:"Muntar (bicicleta)",activo:true},
+  {infinitivo:"RING",pasado:"RANG",participio:"RUNG",traduccion_ca:"Sonar (timbre)",activo:true},
+  {infinitivo:"RISE",pasado:"ROSE",participio:"RISEN",traduccion_ca:"Aixecar-se",activo:true},
+  {infinitivo:"RUN",pasado:"RAN",participio:"RUN",traduccion_ca:"Córrer",activo:true},
+  {infinitivo:"SAY",pasado:"SAID",participio:"SAID",traduccion_ca:"Dir",ambiguos:["SAY","TELL"],activo:true},
+  {infinitivo:"SEE",pasado:"SAW",participio:"SEEN",traduccion_ca:"Veure",activo:true},
+  {infinitivo:"SEEK",pasado:"SOUGHT",participio:"SOUGHT",traduccion_ca:"Buscar",activo:true},
+  {infinitivo:"SELL",pasado:"SOLD",participio:"SOLD",traduccion_ca:"Vendre",activo:true},
+  {infinitivo:"SEND",pasado:"SENT",participio:"SENT",traduccion_ca:"Enviar",activo:true},
+  {infinitivo:"SET",pasado:"SET",participio:"SET",traduccion_ca:"Situar",ambiguos:["LAY","PUT","SET"],activo:true},
+  {infinitivo:"SEW",pasado:"SEWED",participio:"SEWN",traduccion_ca:"Cosir",activo:true},
+  {infinitivo:"SHAKE",pasado:"SHOOK",participio:"SHAKEN",traduccion_ca:"Sacsejar",activo:true},
+  {infinitivo:"SHAVE",pasado:"SHAVED",participio:"SHAVEN",traduccion_ca:"Afaitar (se)",activo:true},
+  {infinitivo:"SHINE",pasado:"SHONE",participio:"SHONE",traduccion_ca:"Brillar",activo:true},
+  {infinitivo:"SHOOT",pasado:"SHOT",participio:"SHOT",traduccion_ca:"Disparar",activo:true},
+  {infinitivo:"SHOW",pasado:"SHOWED",participio:"SHOWN",traduccion_ca:"Mostrar",activo:true},
+  {infinitivo:"SHRINK",pasado:"SHRANK",participio:"SHRUNK",traduccion_ca:"Encongir (-se)",activo:true},
+  {infinitivo:"SHUT",pasado:"SHUT",participio:"SHUT",traduccion_ca:"Tancar (-se)",activo:true},
+  {infinitivo:"SING",pasado:"SANG",participio:"SUNG",traduccion_ca:"Cantar",activo:true},
+  {infinitivo:"SINK",pasado:"SANK",participio:"SUNK",traduccion_ca:"Enfonsar",activo:true},
+  {infinitivo:"SIT",pasado:"SAT",participio:"SAT",traduccion_ca:"Seure",activo:true},
+  {infinitivo:"SLEEP",pasado:"SLEPT",participio:"SLEPT",traduccion_ca:"Dormir",activo:true},
+  {infinitivo:"SMELL",pasado:"SMELT or SMELLED",participio:"SMELT or SMELLED",traduccion_ca:"Olorar",activo:true},
+  {infinitivo:"SOW",pasado:"SOWED",participio:"SOWN",traduccion_ca:"Sembrar",activo:true},
+  {infinitivo:"SPEAK",pasado:"SPOKE",participio:"SPOKEN",traduccion_ca:"Parlar",activo:true},
+  {infinitivo:"SPELL",pasado:"SPELT / SPELLED",participio:"SPELT / SPELLED",traduccion_ca:"Lletrejar",activo:true},
+  {infinitivo:"SPEND",pasado:"SPENT",participio:"SPENT",traduccion_ca:"Gastar (diners)",activo:true},
+  {infinitivo:"SPILL",pasado:"SPILT",participio:"SPILT",traduccion_ca:"Vessar (-se)",activo:true},
+  {infinitivo:"SPIN",pasado:"SPUN or SPAN",participio:"SPUN",traduccion_ca:"Girar, donar voltes",activo:true},
+  {infinitivo:"SPLIT",pasado:"SPLIT",participio:"SPLIT",traduccion_ca:"Separar (-se)",activo:true},
+  {infinitivo:"SPOIL",pasado:"SPOILT or SPOILED",participio:"SPOILT or SPOILED",traduccion_ca:"Espatlllar",activo:true},
+  {infinitivo:"SPREAD",pasado:"SPREAD",participio:"SPREAD",traduccion_ca:"Estendre ('s)",activo:true},
+  {infinitivo:"STAND",pasado:"STOOD",participio:"STOOD",traduccion_ca:"Estar dret",activo:true},
+  {infinitivo:"STEAL",pasado:"STOLE",participio:"STOLEN",traduccion_ca:"Robar",activo:true},
+  {infinitivo:"STICK",pasado:"STUCK",participio:"STUCK",traduccion_ca:"Enganxar (-se)",activo:true},
+  {infinitivo:"STRIKE",pasado:"STRUCK",participio:"STRUCK",traduccion_ca:"Copejar",ambiguos:["HIT","STRIKE"],activo:true},
+  {infinitivo:"SWEAR",pasado:"SWORE",participio:"SWORN",traduccion_ca:"Jurar",activo:true},
+  {infinitivo:"SWEEP",pasado:"SWEPT",participio:"SWEPT",traduccion_ca:"Escombrar",activo:true},
+  {infinitivo:"SWIM",pasado:"SWAM",participio:"SWUM",traduccion_ca:"Nedar",activo:true},
+  {infinitivo:"SWING",pasado:"SWUNG",participio:"SWUNG",traduccion_ca:"Gronxar-se",activo:true},
+  {infinitivo:"TAKE",pasado:"TOOK",participio:"TAKEN",traduccion_ca:"Agafar",ambiguos:["CATCH","TAKE"],activo:true},
+  {infinitivo:"TEACH",pasado:"TAUGHT",participio:"TAUGHT",traduccion_ca:"Ensenyar",activo:true},
+  {infinitivo:"TEAR",pasado:"TORE",participio:"TORN",traduccion_ca:"Estripar (-se)",activo:true},
+  {infinitivo:"TELL",pasado:"TOLD",participio:"TOLD",traduccion_ca:"Dir",ambiguos:["SAY","TELL"],activo:true},
+  {infinitivo:"THINK",pasado:"THOUGHT",participio:"THOUGHT",traduccion_ca:"Pensar",activo:true},
+  {infinitivo:"THROW",pasado:"THREW",participio:"THROWN",traduccion_ca:"Llençar",activo:true},
+  {infinitivo:"UNDERSTAND",pasado:"UNDERSTOOD",participio:"UNDERSTOOD",traduccion_ca:"Entendre",activo:true},
+  {infinitivo:"WAKE UP",pasado:"WOKE UP",participio:"WOKEN UP",traduccion_ca:"Despertar (-se)",activo:true},
+  {infinitivo:"WEAR",pasado:"WORE",participio:"WORN",traduccion_ca:"Portar posat de roba",activo:true},
+  {infinitivo:"WEEP",pasado:"WEPT",participio:"WEPT",traduccion_ca:"Plorar",activo:true},
+  {infinitivo:"WIN",pasado:"WON",participio:"WON",traduccion_ca:"Guanyar",activo:true},
+  {infinitivo:"WRITE",pasado:"WROTE",participio:"WRITTEN",traduccion_ca:"Escriure",activo:true},
+];
+
+// ══════════════════════════════════════
+// COLE 25587 — Cole nou (100 verbs, 6è Primària)
+// ══════════════════════════════════════
+const VERBS_25587 = [
+  {infinitivo:"BE",pasado:"WAS / WERE",participio:"BEEN",traduccion_ca:"Ser / Estar",activo:true},
+  {infinitivo:"BECOME",pasado:"BECAME",participio:"BECOME",traduccion_ca:"Convertir-se en",activo:true},
+  {infinitivo:"BEGIN",pasado:"BEGAN",participio:"BEGUN",traduccion_ca:"Començar",activo:true},
+  {infinitivo:"BREAK",pasado:"BROKE",participio:"BROKEN",traduccion_ca:"Trencar",activo:true},
+  {infinitivo:"BRING",pasado:"BROUGHT",participio:"BROUGHT",traduccion_ca:"Portar",activo:true},
+  {infinitivo:"BUILD",pasado:"BUILT",participio:"BUILT",traduccion_ca:"Construir",activo:true},
+  {infinitivo:"BUY",pasado:"BOUGHT",participio:"BOUGHT",traduccion_ca:"Comprar",activo:true},
+  {infinitivo:"CATCH",pasado:"CAUGHT",participio:"CAUGHT",traduccion_ca:"Atrapar",activo:true},
+  {infinitivo:"CHOOSE",pasado:"CHOSE",participio:"CHOSEN",traduccion_ca:"Triar",activo:true},
+  {infinitivo:"COME",pasado:"CAME",participio:"COME",traduccion_ca:"Venir",activo:true},
+  {infinitivo:"COST",pasado:"COST",participio:"COST",traduccion_ca:"Costar",activo:true},
+  {infinitivo:"CUT",pasado:"CUT",participio:"CUT",traduccion_ca:"Tallar",activo:true},
+  {infinitivo:"DO",pasado:"DID",participio:"DONE",traduccion_ca:"Fer",activo:true},
+  {infinitivo:"DRAW",pasado:"DREW",participio:"DRAWN",traduccion_ca:"Dibuixar",activo:true},
+  {infinitivo:"DRINK",pasado:"DRANK",participio:"DRUNK",traduccion_ca:"Beure",activo:true},
+  {infinitivo:"DRIVE",pasado:"DROVE",participio:"DRIVEN",traduccion_ca:"Conduir",activo:true},
+  {infinitivo:"EAT",pasado:"ATE",participio:"EATEN",traduccion_ca:"Menjar",activo:true},
+  {infinitivo:"FALL",pasado:"FELL",participio:"FALLEN",traduccion_ca:"Caure",activo:true},
+  {infinitivo:"FEEL",pasado:"FELT",participio:"FELT",traduccion_ca:"Sentir",activo:true},
+  {infinitivo:"FIND",pasado:"FOUND",participio:"FOUND",traduccion_ca:"Trobar",activo:true},
+  {infinitivo:"FLY",pasado:"FLEW",participio:"FLOWN",traduccion_ca:"Volar",activo:true},
+  {infinitivo:"FORGET",pasado:"FORGOT",participio:"FORGOTTEN",traduccion_ca:"Oblidar",activo:true},
+  {infinitivo:"GET",pasado:"GOT",participio:"GOT",traduccion_ca:"Aconseguir",activo:true},
+  {infinitivo:"GIVE",pasado:"GAVE",participio:"GIVEN",traduccion_ca:"Donar",activo:true},
+  {infinitivo:"GO",pasado:"WENT",participio:"GONE",traduccion_ca:"Anar",activo:true},
+  {infinitivo:"GROW",pasado:"GREW",participio:"GROWN",traduccion_ca:"Créixer",activo:true},
+  {infinitivo:"HAVE",pasado:"HAD",participio:"HAD",traduccion_ca:"Tenir",activo:true},
+  {infinitivo:"HEAR",pasado:"HEARD",participio:"HEARD",traduccion_ca:"Sentir",activo:true},
+  {infinitivo:"HIT",pasado:"HIT",participio:"HIT",traduccion_ca:"Colpejar",activo:true},
+  {infinitivo:"HOLD",pasado:"HELD",participio:"HELD",traduccion_ca:"Aguantar",activo:true},
+  {infinitivo:"HURT",pasado:"HURT",participio:"HURT",traduccion_ca:"Fer mal",activo:true},
+  {infinitivo:"KEEP",pasado:"KEPT",participio:"KEPT",traduccion_ca:"Guardar",activo:true},
+  {infinitivo:"KNOW",pasado:"KNEW",participio:"KNOWN",traduccion_ca:"Saber",activo:true},
+  {infinitivo:"LEARN",pasado:"LEARNT",participio:"LEARNT",traduccion_ca:"Aprendre",activo:true},
+  {infinitivo:"LEAVE",pasado:"LEFT",participio:"LEFT",traduccion_ca:"Marxar",activo:true},
+  {infinitivo:"LET",pasado:"LET",participio:"LET",traduccion_ca:"Deixar",activo:true},
+  {infinitivo:"LOSE",pasado:"LOST",participio:"LOST",traduccion_ca:"Perdre",activo:true},
+  {infinitivo:"MAKE",pasado:"MADE",participio:"MADE",traduccion_ca:"Fer",ambiguos:["DO","MAKE"],activo:true},
+  {infinitivo:"MEET",pasado:"MET",participio:"MET",traduccion_ca:"Conèixer",activo:true},
+  {infinitivo:"PAY",pasado:"PAID",participio:"PAID",traduccion_ca:"Pagar",activo:true},
+  {infinitivo:"PUT",pasado:"PUT",participio:"PUT",traduccion_ca:"Posar",activo:true},
+  {infinitivo:"READ",pasado:"READ",participio:"READ",traduccion_ca:"Llegir",activo:true},
+  {infinitivo:"RIDE",pasado:"RODE",participio:"RIDDEN",traduccion_ca:"Muntar",activo:true},
+  {infinitivo:"RING",pasado:"RANG",participio:"RUNG",traduccion_ca:"Sonar",activo:true},
+  {infinitivo:"RUN",pasado:"RAN",participio:"RUN",traduccion_ca:"Córrer",activo:true},
+  {infinitivo:"SAY",pasado:"SAID",participio:"SAID",traduccion_ca:"Dir",ambiguos:["SAY","TELL"],activo:true},
+  {infinitivo:"SEE",pasado:"SAW",participio:"SEEN",traduccion_ca:"Veure",activo:true},
+  {infinitivo:"SELL",pasado:"SOLD",participio:"SOLD",traduccion_ca:"Vendre",activo:true},
+  {infinitivo:"SEND",pasado:"SENT",participio:"SENT",traduccion_ca:"Enviar",activo:true},
+  {infinitivo:"SIT",pasado:"SAT",participio:"SAT",traduccion_ca:"Seure",activo:true},
+  {infinitivo:"SLEEP",pasado:"SLEPT",participio:"SLEPT",traduccion_ca:"Dormir",activo:true},
+  {infinitivo:"SPEAK",pasado:"SPOKE",participio:"SPOKEN",traduccion_ca:"Parlar",activo:true},
+  {infinitivo:"SPEND",pasado:"SPENT",participio:"SPENT",traduccion_ca:"Gastar",activo:true},
+  {infinitivo:"STAND",pasado:"STOOD",participio:"STOOD",traduccion_ca:"Estar dret",activo:true},
+  {infinitivo:"SWIM",pasado:"SWAM",participio:"SWUM",traduccion_ca:"Nedar",activo:true},
+  {infinitivo:"TAKE",pasado:"TOOK",participio:"TAKEN",traduccion_ca:"Agafar",activo:true},
+  {infinitivo:"TEACH",pasado:"TAUGHT",participio:"TAUGHT",traduccion_ca:"Ensenyar",activo:true},
+  {infinitivo:"TELL",pasado:"TOLD",participio:"TOLD",traduccion_ca:"Explicar",ambiguos:["SAY","TELL"],activo:true},
+  {infinitivo:"THINK",pasado:"THOUGHT",participio:"THOUGHT",traduccion_ca:"Pensar",activo:true},
+  {infinitivo:"THROW",pasado:"THREW",participio:"THROWN",traduccion_ca:"Llençar",activo:true},
+  {infinitivo:"UNDERSTAND",pasado:"UNDERSTOOD",participio:"UNDERSTOOD",traduccion_ca:"Entendre",activo:true},
+  {infinitivo:"WAKE",pasado:"WOKE",participio:"WOKEN",traduccion_ca:"Despertar",activo:true},
+  {infinitivo:"WEAR",pasado:"WORE",participio:"WORN",traduccion_ca:"Portar roba",activo:true},
+  {infinitivo:"WIN",pasado:"WON",participio:"WON",traduccion_ca:"Guanyar",activo:true},
+  {infinitivo:"WRITE",pasado:"WROTE",participio:"WRITTEN",traduccion_ca:"Escriure",activo:true},
+  {infinitivo:"SHAKE",pasado:"SHOOK",participio:"SHAKEN",traduccion_ca:"Sacsejar",activo:true},
+  {infinitivo:"SHINE",pasado:"SHONE",participio:"SHONE",traduccion_ca:"Brillar",activo:true},
+  {infinitivo:"SHOOT",pasado:"SHOT",participio:"SHOT",traduccion_ca:"Disparar",activo:true},
+  {infinitivo:"SHUT",pasado:"SHUT",participio:"SHUT",traduccion_ca:"Tancar",activo:true},
+  {infinitivo:"SING",pasado:"SANG",participio:"SUNG",traduccion_ca:"Cantar",activo:true},
+  {infinitivo:"SINK",pasado:"SANK",participio:"SUNK",traduccion_ca:"Enfonsar-se",activo:true},
+  {infinitivo:"SMELL",pasado:"SMELT",participio:"SMELT",traduccion_ca:"Olorar",activo:true},
+  {infinitivo:"STICK",pasado:"STUCK",participio:"STUCK",traduccion_ca:"Enganxar",activo:true},
+  {infinitivo:"STRIKE",pasado:"STRUCK",participio:"STRUCK",traduccion_ca:"Colpejar",activo:true},
+  {infinitivo:"SWEEP",pasado:"SWEPT",participio:"SWEPT",traduccion_ca:"Escombrar",activo:true},
+  {infinitivo:"TEAR",pasado:"TORE",participio:"TORN",traduccion_ca:"Trencar",activo:true},
+  {infinitivo:"FEED",pasado:"FED",participio:"FED",traduccion_ca:"Alimentar",activo:true},
+  {infinitivo:"FIGHT",pasado:"FOUGHT",participio:"FOUGHT",traduccion_ca:"Lluitar",activo:true},
+  {infinitivo:"LAY",pasado:"LAID",participio:"LAID",traduccion_ca:"Estendre",activo:true},
+  {infinitivo:"DEAL",pasado:"DEALT",participio:"DEALT",traduccion_ca:"Tractar",activo:true},
+  {infinitivo:"UNDERGO",pasado:"UNDERWENT",participio:"UNDERGONE",traduccion_ca:"Patir",activo:true},
+  {infinitivo:"SLIDE",pasado:"SLID",participio:"SLID",traduccion_ca:"Lliscar",activo:true},
+];
+
+async function saveCole(id, nombre) {
+  await setDoc(doc(db, "coles", id), { nombre, idioma: "ca", activo: true });
+  log(`✅ Cole ${id} (${nombre}) creat`, 'ok');
+}
+
+async function saveVerbs(coleId, verbs) {
+  log(`📝 Carregant ${verbs.length} verbs per cole ${coleId}...`, 'info');
+  // Use batches of 500
+  const batches = [];
+  for(let i = 0; i < verbs.length; i += 400) {
+    batches.push(verbs.slice(i, i + 400));
+  }
+  for(const batch of batches) {
+    const b = writeBatch(db);
+    batch.forEach(verb => {
+      const ref = doc(collection(db, "coles", coleId, "verbos"));
+      b.set(ref, verb);
+    });
+    await b.commit();
+  }
+  log(`✅ ${verbs.length} verbs carregats per cole ${coleId}`, 'ok');
+}
+
+window.loadCole36056 = async function() {
+  try {
+    await saveCole("36056", "Cole de l'Hugo");
+    await saveVerbs("36056", VERBS_36056);
+    log('🎉 Cole 36056 completat!', 'ok');
+  } catch(e) { log('❌ Error: ' + e.message, 'err'); }
+};
+
+window.loadCole25587 = async function() {
+  try {
+    await saveCole("25587", "Cole 5587SB");
+    await saveVerbs("25587", VERBS_25587);
+    log('🎉 Cole 25587 completat!', 'ok');
+  } catch(e) { log('❌ Error: ' + e.message, 'err'); }
+};
+
+window.loadAll = async function() {
+  log('🚀 Iniciant càrrega completa...', 'info');
+  await window.loadCole36056();
+  await window.loadCole25587();
+  log('✅ Tot carregat! Ja pots tancar aquesta pàgina.', 'ok');
+};
+</script>
+</body>
+</html>
