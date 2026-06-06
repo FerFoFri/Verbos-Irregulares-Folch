@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><title>Carrega cole 16941</title>
+<style>body{font-family:monospace;background:#0f172a;color:#f1f5f9;padding:20px;}
+button{padding:12px 24px;background:#f59e0b;color:#0f172a;border:none;border-radius:8px;font-weight:800;cursor:pointer;}
+pre{background:#1e293b;padding:16px;border-radius:8px;font-size:.8rem;max-height:400px;overflow:auto;}
+.ok{color:#10b981;}.err{color:#ef4444;}.info{color:#94a3b8;}</style>
+</head>
+<body>
+<h2>🏫 Carrega cole 16941 — Escola Isidre Martí</h2>
+<p class="info">Executa UNA sola vegada. Assegura't que adminOpen() = true a Firebase.</p>
+<button onclick="loadCole()">🚀 Carregar cole 16941</button>
+<pre id="log">Esperant...</pre>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, setDoc, collection, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const db = getFirestore(initializeApp({
+  apiKey: "AIzaSyD6TGwnkWkVHvwK29iyB1sBaJAzU5YFlW8",
+  authDomain: "irregularverbsmulticenter.firebaseapp.com",
+  projectId: "irregularverbsmulticenter",
+  storageBucket: "irregularverbsmulticenter.firebasestorage.app",
+  messagingSenderId: "326680899997",
+  appId: "1:326680899997:web:1c1d63c3d58bb4ec0c3f74"
+})));
+
+const log = (msg,cls='') => { const el=document.getElementById('log'); el.innerHTML+=`<span class="${cls}">${msg}</span>\n`; el.scrollTop=el.scrollHeight; };
+const VERBS = [{"infinitivo": "WRITE", "pasado": "WROTE", "participio": "WRITTEN", "traduccion_ca": "Escriure", "activo": true}, {"infinitivo": "DO", "pasado": "DID", "participio": "DONE", "traduccion_ca": "Fer", "activo": true}, {"infinitivo": "HAVE", "pasado": "HAD", "participio": "HAD", "traduccion_ca": "Tenir", "activo": true}, {"infinitivo": "EAT", "pasado": "ATE", "participio": "EATEN", "traduccion_ca": "Menjar", "activo": true}, {"infinitivo": "PUT", "pasado": "PUT", "participio": "PUT", "traduccion_ca": "Posar", "activo": true}, {"infinitivo": "IS (be)", "pasado": "WAS", "participio": "BEEN", "traduccion_ca": "Ser / Estar (ell/ella)", "activo": true}, {"infinitivo": "ARE (be)", "pasado": "WERE", "participio": "BEEN", "traduccion_ca": "Ser / Estar (vosaltres)", "activo": true}, {"infinitivo": "GO", "pasado": "WENT", "participio": "GONE", "traduccion_ca": "Anar", "activo": true}, {"infinitivo": "SEND", "pasado": "SENT", "participio": "SENT", "traduccion_ca": "Enviar", "activo": true}, {"infinitivo": "BUY", "pasado": "BOUGHT", "participio": "BOUGHT", "traduccion_ca": "Comprar", "activo": true}, {"infinitivo": "CUT", "pasado": "CUT", "participio": "CUT", "traduccion_ca": "Tallar", "activo": true}, {"infinitivo": "DRAW", "pasado": "DREW", "participio": "DRAWN", "traduccion_ca": "Dibuixar", "activo": true}, {"infinitivo": "DRINK", "pasado": "DRANK", "participio": "DRUNK", "traduccion_ca": "Beure", "activo": true}, {"infinitivo": "DRIVE", "pasado": "DROVE", "participio": "DRIVEN", "traduccion_ca": "Conduir", "activo": true}, {"infinitivo": "FIND", "pasado": "FOUND", "participio": "FOUND", "traduccion_ca": "Trobar", "activo": true}, {"infinitivo": "GET", "pasado": "GOT", "participio": "GOT or GOTTEN", "traduccion_ca": "Aconseguir", "activo": true}, {"infinitivo": "LOSE", "pasado": "LOST", "participio": "LOST", "traduccion_ca": "Perdre", "activo": true}, {"infinitivo": "RIDE", "pasado": "RODE", "participio": "RIDDEN", "traduccion_ca": "Muntar", "activo": true}, {"infinitivo": "RUN", "pasado": "RAN", "participio": "RUN", "traduccion_ca": "Córrer", "activo": true}, {"infinitivo": "SAY", "pasado": "SAID", "participio": "SAID", "traduccion_ca": "Dir", "activo": true}, {"infinitivo": "SEE", "pasado": "SAW", "participio": "SEEN", "traduccion_ca": "Veure", "activo": true}, {"infinitivo": "SING", "pasado": "SANG", "participio": "SUNG", "traduccion_ca": "Cantar", "activo": true}, {"infinitivo": "SIT", "pasado": "SAT", "participio": "SAT", "traduccion_ca": "Seure", "activo": true}, {"infinitivo": "SWIM", "pasado": "SWAM", "participio": "SWUM", "traduccion_ca": "Nedar", "activo": true}, {"infinitivo": "WIN", "pasado": "WON", "participio": "WON", "traduccion_ca": "Guanyar", "activo": true}, {"infinitivo": "WEAR", "pasado": "WORE", "participio": "WORN", "traduccion_ca": "Portar posat", "activo": true}];
+
+window.loadCole = async function() {
+  try {
+    await setDoc(doc(db,"coles","16941"), {nombre:"Escola Isidre Martí",idioma:"ca",activo:true});
+    log('✅ Cole creat','ok');
+    const b=writeBatch(db);
+    VERBS.forEach(v=>{ b.set(doc(collection(db,"coles","16941","verbos")),v); });
+    await b.commit();
+    log(`✅ ${VERBS.length} verbs carregats!`,'ok');
+    log('🎉 Tanca aquesta pàgina i recorda posar adminOpen()=false!','ok');
+  } catch(e) { log('❌ '+e.message,'err'); }
+};
+</script>
+</body>
+</html>
